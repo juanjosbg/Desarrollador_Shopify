@@ -74,6 +74,33 @@
           </span>
         </button>
       </div>
+      {% comment %} En esta parte se implementa Barra de progreso de envío gratis {% endcomment %}
+      {% assign free_shipping_threshold = 150000 %}
+      {% assign cart_total = cart.total_price | divided_by: 100 %}
+      {% assign remaining_amount = free_shipping_threshold | minus: cart_total %}
+      {% assign progress_percentage = cart_total | times: 100 | divided_by: free_shipping_threshold %}
+
+      {% if progress_percentage > 100 %}
+        {% assign progress_percentage = 100 %}
+      {% endif %}
+
+      <div class="free-shipping-bar">
+        {% if cart_total >= free_shipping_threshold %}
+          <p class="free-shipping-bar__message">🎉 ¡Ya tienes envío gratis!</p>
+        {% else %}
+          <p class="free-shipping-bar__message">
+            Te faltan <strong>{{ remaining_amount | times: 100 | money }}</strong> para obtener envío gratis.
+          </p>
+        {% endif %}
+
+        <div class="free-shipping-bar__progress">
+          <div
+            class="free-shipping-bar__progress-fill"
+            style="width: {{ progress_percentage }}%;"
+          ></div>
+        </div>
+      </div>
+
       <cart-drawer-items
         {% if cart == empty %}
           class=" is-empty"
@@ -258,7 +285,10 @@
                             {%- endif -%}
 
                             {%- if item.variant.available and item.unit_price_measurement -%}
-                              {% render 'unit-price', price: item.unit_price, measurement: item.unit_price_measurement %}
+                              {% render 'unit-price',
+                                price: item.unit_price,
+                                measurement: item.unit_price_measurement
+                              %}
                             {%- endif -%}
                           </div>
                         </td>
