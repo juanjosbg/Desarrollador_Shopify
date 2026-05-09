@@ -74,32 +74,44 @@
           </span>
         </button>
       </div>
-      {% comment %} En esta parte se implementa Barra de progreso de envío gratis {% endcomment %}
-      {% assign free_shipping_threshold = 150000 %}
-      {% assign cart_total = cart.total_price | divided_by: 100 %}
-      {% assign remaining_amount = free_shipping_threshold | minus: cart_total %}
-      {% assign progress_percentage = cart_total | times: 100 | divided_by: free_shipping_threshold %}
+      {% comment %} Parte de Barra de progreso de envío gratis {% endcomment %}
+      {%- if free_shipping_enabled -%}
+        {%- liquid
+          assign free_shipping_threshold_cents = free_shipping_threshold | default: 150000 | times: 100
+          assign free_shipping_region_label = free_shipping_region_label | default: 'nacional'
 
-      {% if progress_percentage > 100 %}
-        {% assign progress_percentage = 100 %}
-      {% endif %}
+          if free_shipping_threshold_cents <= 0
+            assign free_shipping_threshold_cents = 15000000
+          endif
 
-      <div class="free-shipping-bar">
-        {% if cart_total >= free_shipping_threshold %}
-          <p class="free-shipping-bar__message">🎉 ¡Ya tienes envío gratis!</p>
-        {% else %}
-          <p class="free-shipping-bar__message">
-            Te faltan <strong>{{ remaining_amount | times: 100 | money }}</strong> para obtener envío gratis.
-          </p>
-        {% endif %}
+          assign remaining_amount = free_shipping_threshold_cents | minus: cart.total_price
+          assign progress_percentage = cart.total_price | times: 100 | divided_by: free_shipping_threshold_cents
 
-        <div class="free-shipping-bar__progress">
-          <div
-            class="free-shipping-bar__progress-fill"
-            style="width: {{ progress_percentage }}%;"
-          ></div>
+          if progress_percentage > 100
+            assign progress_percentage = 100
+          endif
+        -%}
+
+        <div class="free-shipping-bar" role="status">
+          {%- if cart.total_price >= free_shipping_threshold_cents -%}
+            <p class="free-shipping-bar__message">Ya tienes envio gratis {{ free_shipping_region_label }}.</p>
+          {%- else -%}
+            <p class="free-shipping-bar__message">
+              Te faltan <strong>{{ remaining_amount | money }}</strong> para obtener envio gratis
+              {{ free_shipping_region_label }}.
+            </p>
+          {%- endif -%}
+
+          <progress
+            class="free-shipping-bar__progress"
+            value="{{ progress_percentage }}"
+            max="100"
+            aria-label="Progreso hacia envio gratis"
+          >
+            {{ progress_percentage }}%
+          </progress>
         </div>
-      </div>
+      {%- endif -%}
 
       <cart-drawer-items
         {% if cart == empty %}

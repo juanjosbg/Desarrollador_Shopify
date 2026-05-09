@@ -1,0 +1,234 @@
+{{ 'section-trust-badges.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="trust-badges color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="trust-badges__heading {{ section.settings.heading_size }}">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+
+    <ul
+      class="trust-badges__list trust-badges__list--{{ section.settings.columns_desktop }}"
+      role="list"
+    >
+      {%- for block in section.blocks -%}
+        <li
+          class="trust-badges__item trust-badges__item--{{ section.settings.content_alignment }}"
+          {{ block.shopify_attributes }}
+        >
+          <span class="trust-badges__icon" aria-hidden="true">
+            {%- render 'icon-accordion', icon: block.settings.icon -%}
+          </span>
+
+          <div class="trust-badges__content">
+            {%- if block.settings.title != blank -%}
+              <h3 class="trust-badges__title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.description != blank -%}
+              <div class="trust-badges__description rte">
+                {{ block.settings.description }}
+              </div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Trust badges",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Compra con confianza",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h2",
+      "label": "Heading size"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "left",
+      "label": "Content alignment"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "Columns on desktop"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Badge",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "options": [
+            {
+              "value": "check_mark",
+              "label": "Check mark"
+            },
+            {
+              "value": "clipboard",
+              "label": "Clipboard"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            },
+            {
+              "value": "lock",
+              "label": "Lock"
+            },
+            {
+              "value": "return",
+              "label": "Return"
+            },
+            {
+              "value": "truck",
+              "label": "Truck"
+            },
+            {
+              "value": "star",
+              "label": "Star"
+            }
+          ],
+          "default": "check_mark",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Pago seguro",
+          "label": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "default": "<p>Transacciones protegidas y datos tratados de forma segura.</p>",
+          "label": "Short description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust badges",
+      "blocks": [
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "lock",
+            "title": "Pago seguro",
+            "description": "<p>Transacciones protegidas antes de finalizar tu compra.</p>"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "truck",
+            "title": "Envios a todo Colombia",
+            "description": "<p>Despachos para Cali y cobertura nacional.</p>"
+          }
+        },
+        {
+          "type": "badge",
+          "settings": {
+            "icon": "check_mark",
+            "title": "Productos originales",
+            "description": "<p>Suplementos de lineas propias y seleccionadas.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

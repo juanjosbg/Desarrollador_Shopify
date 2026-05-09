@@ -1,1 +1,61 @@
-{%- render 'cart-drawer' -%}
+{%- liquid
+  assign free_shipping_threshold = section.settings.free_shipping_national_threshold
+  assign free_shipping_region_label = 'nacional'
+
+  if section.settings.free_shipping_region == 'cali'
+    assign free_shipping_threshold = section.settings.free_shipping_cali_threshold
+    assign free_shipping_region_label = 'en Cali'
+  endif
+-%}
+
+{%- render 'cart-drawer',
+  free_shipping_enabled: section.settings.free_shipping_enabled,
+  free_shipping_threshold: free_shipping_threshold,
+  free_shipping_region_label: free_shipping_region_label
+-%}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Free shipping progress"
+    },
+    {
+      "type": "checkbox",
+      "id": "free_shipping_enabled",
+      "label": "Show free shipping progress",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "free_shipping_region",
+      "label": "Shipping threshold",
+      "default": "national",
+      "options": [
+        {
+          "value": "cali",
+          "label": "Cali"
+        },
+        {
+          "value": "national",
+          "label": "National"
+        }
+      ]
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_cali_threshold",
+      "label": "Cali threshold in COP",
+      "default": 100000
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_national_threshold",
+      "label": "National threshold in COP",
+      "default": 150000
+    }
+  ]
+}
+{% endschema %}

@@ -399,6 +399,44 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   margin-top: 0.8rem;
 }
 
+.free-shipping-bar {
+  padding: 1.2rem 0;
+  border-top: 0.1rem solid rgba(var(--color-foreground), 0.08);
+  border-bottom: 0.1rem solid rgba(var(--color-foreground), 0.08);
+}
+
+.free-shipping-bar__message {
+  margin: 0 0 0.8rem;
+  font-size: 1.3rem;
+  line-height: calc(1 + 0.3 / var(--font-body-scale));
+}
+
+.free-shipping-bar__progress {
+  display: block;
+  width: 100%;
+  height: 0.8rem;
+  overflow: hidden;
+  appearance: none;
+  border: 0;
+  border-radius: 999rem;
+  background: rgba(var(--color-foreground), 0.12);
+}
+
+.free-shipping-bar__progress::-webkit-progress-bar {
+  border-radius: 999rem;
+  background: rgba(var(--color-foreground), 0.12);
+}
+
+.free-shipping-bar__progress::-webkit-progress-value {
+  border-radius: 999rem;
+  background: rgb(var(--color-button));
+}
+
+.free-shipping-bar__progress::-moz-progress-bar {
+  border-radius: 999rem;
+  background: rgb(var(--color-button));
+}
+
 .cart-drawer .quantity-popover__info + .cart-item__error {
   margin-top: 0.2rem;
 }
