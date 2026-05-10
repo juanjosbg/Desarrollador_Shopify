@@ -31,6 +31,17 @@ SHOPIFY_SHOP_DOMAIN=healthy-america-assessment.myshopify.com
 
 `SHOPIFY_WEBHOOK_SECRET` debe ser el client secret de la app Shopify que emite el webhook.
 
+Para probar localmente sin una app Shopify real, usar un secreto de prueba:
+
+```env
+SHOPIFY_WEBHOOK_SECRET=test_secret_123
+EMAIL_MARKETING_ENDPOINT=https://webhook.site/tu-url-unica
+```
+
+`EMAIL_MARKETING_ENDPOINT` debe ser la URL unica generada por Webhook.site. No se deben subir valores reales en `.env`; ese archivo esta ignorado por Git.
+
+Importante: `.env.example` es una plantilla y por eso no contiene credenciales reales. Para evaluar el proyecto no se necesita mi `.env`; se puede crear uno nuevo con `SHOPIFY_WEBHOOK_SECRET=test_secret_123` y una URL propia de Webhook.site.
+
 ## Instalacion
 
 ```bash
@@ -66,7 +77,7 @@ npm run test:webhook
 Este script genera una orden falsa, calcula el HMAC con `SHOPIFY_WEBHOOK_SECRET` y envia el request a:
 
 ```text
-http://localhost:3000/webhooks/orders-paid
+http://127.0.0.1:3000/webhooks/orders-paid
 ```
 
 Respuesta esperada:
@@ -76,6 +87,8 @@ Respuesta esperada:
 ```
 
 En Webhook.site debe aparecer el payload transformado.
+
+Esta prueba cubre el flujo principal sin depender de una tienda real: simula el webhook de Shopify, firma el body con HMAC, valida la firma en el servidor, transforma la orden y la envia al endpoint mock.
 
 ## Probar con ngrok
 

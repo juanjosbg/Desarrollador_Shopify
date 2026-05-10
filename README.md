@@ -18,6 +18,22 @@ Para el Reto 2 escogí implementar:
 
 No implementé la Opción B porque prioricé dos mejoras más generales y reutilizables para conversión: una enfocada en aumentar el valor del carrito y otra enfocada en reforzar confianza antes de la compra.
 
+### Demo en Shopify
+
+Las mejoras del Reto 2 fueron probadas en una development store:
+
+```text
+https://healthy-america-assessment.myshopify.com/
+```
+
+Tema usado en la tienda de prueba:
+
+```text
+dawn-healthy-america-assessment-v2
+```
+
+Para validar la Opción A, abrir un producto, agregarlo al carrito y abrir el cart drawer desde el ícono del carrito. Para validar la Opción C, revisar la sección `Trust badges` agregada en la homepage.
+
 ## Opción A - Barra de progreso de envío gratis
 
 Se agregó una barra de progreso dentro del cart drawer para mostrar cuánto le falta al usuario para alcanzar el envío gratis.
@@ -42,8 +58,8 @@ El cart drawer originalmente se renderizaba como snippet desde `layout/theme.liq
 
 ```liquid
 {%- section 'cart-drawer' -%}
-
 ```
+_________________________
 
 ## Reto 3 - Integración de API y automatización
 
@@ -81,6 +97,17 @@ EMAIL_MARKETING_ENDPOINT=https://webhook.site/your-endpoint
 SHOPIFY_ADMIN_ACCESS_TOKEN=
 SHOPIFY_SHOP_DOMAIN=healthy-america-assessment.myshopify.com
 ```
+
+El archivo `.env.example` no incluye credenciales reales por seguridad. Esa es la practica correcta: el repositorio documenta que variables se necesitan, pero cada evaluador puede crear su propio `.env` local.
+
+Para prueba local sin credenciales reales de Shopify se puede usar:
+
+```env
+SHOPIFY_WEBHOOK_SECRET=test_secret_123
+EMAIL_MARKETING_ENDPOINT=https://webhook.site/tu-url-unica
+```
+
+El script `npm run test:webhook` usa ese secreto local para generar una firma HMAC válida y simular lo que haría Shopify.
 
 ### Ejecutar localmente
 
