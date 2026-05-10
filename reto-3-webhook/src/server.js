@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const { verifyShopifyHmac } = require('./shopify');
+const { getCustomerPurchaseContext, verifyShopifyHmac } = require('./shopify');
 const { transformOrderPayload } = require('./transformer');
 const { sendWithRetry } = require('./emailMarketingClient');
 
@@ -36,7 +36,18 @@ app.post('/webhooks/orders-paid', express.raw({ type: 'application/json' }), asy
     return res.status(400).json({ error: 'Invalid JSON payload' });
   }
 
-  const marketingPayload = transformOrderPayload(order);
+  let purchaseContext = { isFirstOrder: null };
+
+  try {
+    purchaseContext = await getCustomerPurchaseContext(order.email || order.customer?.email);
+  } catch (error) {
+    console.error('Could not enrich order with Shopify Admin API', {
+      message: error.message,
+      orderId: order.id,
+    });
+  }
+
+  const marketingPayload = transformOrderPayload(order, purchaseContext);
 
   console.log('Received paid order webhook', {
     topic,

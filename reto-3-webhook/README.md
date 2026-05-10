@@ -27,6 +27,8 @@ SHOPIFY_WEBHOOK_SECRET=your_shopify_app_client_secret
 EMAIL_MARKETING_ENDPOINT=https://webhook.site/your-endpoint
 SHOPIFY_ADMIN_ACCESS_TOKEN=
 SHOPIFY_SHOP_DOMAIN=healthy-america-assessment.myshopify.com
+SHOPIFY_ADMIN_API_VERSION=2026-04
+LOCAL_WEBHOOK_URL=http://127.0.0.1:3000/webhooks/orders-paid
 ```
 
 `SHOPIFY_WEBHOOK_SECRET` debe ser el client secret de la app Shopify que emite el webhook.
@@ -41,6 +43,19 @@ EMAIL_MARKETING_ENDPOINT=https://webhook.site/tu-url-unica
 `EMAIL_MARKETING_ENDPOINT` debe ser la URL unica generada por Webhook.site. No se deben subir valores reales en `.env`; ese archivo esta ignorado por Git.
 
 Importante: `.env.example` es una plantilla y por eso no contiene credenciales reales. Para evaluar el proyecto no se necesita mi `.env`; se puede crear uno nuevo con `SHOPIFY_WEBHOOK_SECRET=test_secret_123` y una URL propia de Webhook.site.
+
+Para conectar la tienda real `healthy-america-assessment.myshopify.com`, el `.env` debe quedar asi:
+
+```env
+PORT=3000
+SHOPIFY_WEBHOOK_SECRET=client_secret_real_de_la_app_shopify
+EMAIL_MARKETING_ENDPOINT=https://webhook.site/uuid-real-del-mock
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_token_si_se_usa_el_bonus
+SHOPIFY_SHOP_DOMAIN=healthy-america-assessment.myshopify.com
+SHOPIFY_ADMIN_API_VERSION=2026-04
+```
+
+Con el valor de prueba `SHOPIFY_WEBHOOK_SECRET=test_secret_123` solo funciona `npm run test:webhook`; Shopify real firmara el webhook con el secret real de la app.
 
 ## Instalacion
 
@@ -108,6 +123,17 @@ Topic:
 orders/paid
 ```
 
+Ejemplo para esta tienda:
+
+```text
+Tienda: healthy-america-assessment.myshopify.com
+Evento: orders/paid
+Formato: JSON
+URL: https://TU-SUBDOMINIO.ngrok-free.app/webhooks/orders-paid
+```
+
+El subdominio cambia cada vez que se abre un tunel gratis de ngrok. Si cambia, tambien se debe actualizar la URL del webhook en Shopify.
+
 ## Payload enviado a marketing
 
 Ejemplo:
@@ -141,6 +167,8 @@ Ejemplo:
 }
 ```
 
-## Nota sobre el bonus
+## Bonus: historial del cliente
 
-El campo `isFirstOrder` queda preparado para enriquecerse con Admin API GraphQL usando `SHOPIFY_ADMIN_ACCESS_TOKEN`. En una implementacion productiva se consultaria el historial del cliente antes de enviar el payload a marketing.
+Si `SHOPIFY_ADMIN_ACCESS_TOKEN` esta configurado, el servicio consulta la Admin API GraphQL antes de enviar el payload a marketing. Busca el cliente por email y llena `isFirstOrder` con base en `numberOfOrders`.
+
+Si el token no existe o la consulta falla, el webhook no se bloquea: el servicio deja un log y envia `isFirstOrder: null`.
