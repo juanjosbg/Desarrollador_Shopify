@@ -8,3 +8,5 @@
 ehthumbs.db
 Thumbs.db
 .shopify
+reto-3-webhook/.env
+reto-3-webhook/node_modules/
